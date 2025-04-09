@@ -14,10 +14,33 @@ export default function Home() {
   const [itemInput, setItemInput] = useState("");
 
   const handleAddButton = () => {
-    setList({
+    if(itemInput.trim() === "")
+      return;
+    setList([
       ...list,
+      { label: itemInput, checked: false} 
+    ]);
+    setItemInput("")
+  }
 
-    })
+  const deleteItem = (index: number) => {
+    setList(list.filter((item, key) => {
+      if(key !== index) {
+        return true;
+      }
+      return false;
+    }))
+  }
+
+  const toggleItem = (index:number) => {
+    let newList = [...list];
+    for (let i in newList) {
+      if(index === parseInt(i)){
+        newList[i].checked = !newList[i].checked;
+      }
+    }
+
+     setList(newList);
   }
 
   return (
@@ -33,13 +56,18 @@ export default function Home() {
           value={itemInput}
           onChange={e => setItemInput(e.target.value)}
           />
-        <button>Adcionar</button>
+        <button onClick={handleAddButton}>Adcionar</button>
       </div>
 
+      <p className="my-4 mx-2">{list.length}itens na lista</p>
+
       <ul className="w-full max-w-lg list-disc pl-5">
-        {list.map(item => (
-          <li>{item.label} - <button className="hover:underline">[ deletar ]</button> </li>
-        ))}</ul>
+        {list.map((item, index) => (
+          <li key={index}>
+            <input onClick={() => toggleItem(index)} type="checkbox" checked={item.checked} className="w-6 h-6 mr-3"/>
+            {item.label} - <button onClick={() => deleteItem(index)} className="hover:underline">[ deletar ]</button> </li>
+        ))}
+      </ul>
     </div>
   );
 }
